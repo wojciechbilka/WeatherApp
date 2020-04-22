@@ -12,7 +12,12 @@ public class MainApp implements Runnable {
 
     private void startApp() {
         scanner = new Scanner(System.in);
-        System.out.println("Wybierz po czym chcesz znaleźć miejsce dla którego wyświetlisz pogodę \n0 - Zakończ działanie \n1 - Nazwa Miasta \n2 - Kod pocztowy");
+        System.out.println("Wybierz po czym chcesz znaleźć miejsce dla którego wyświetlisz pogodę " +
+                "\n0 - Zakończ działanie " +
+                "\n1 - Nazwa Miasta" +
+                "\n2 - Kod pocztowy " +
+                "\n3 - Identyfikator miasta" +
+                "\n4 - Położenie geograficzne");
         Integer name = scanner.nextInt();
         chooseTypeSearching(name);
     }
@@ -27,6 +32,14 @@ public class MainApp implements Runnable {
                 break;
             case 2:
                 connectByZipCode();
+                startApp();
+                break;
+            case 3:
+                connectByCityId();
+                startApp();
+                break;
+            case 4:
+                //connectByCoordinates();
                 startApp();
                 break;
             default:
@@ -64,6 +77,19 @@ public class MainApp implements Runnable {
         getWeatherData(source);
     }
 
+    private void connectByCityId() {
+        System.out.println("Podaj identyfikator miasta");
+        String id = scanner.next();
+        String cityIdAppend = "id=" + id;
+        String source = httpService.connect(Config.APP_URL + "?" + cityIdAppend + "&" + keyAppend + "&" + unitsAppend + "&" + langAppend);
+
+        if (source == null) {
+            System.out.println("Błąd połączenia.");
+            return;
+        }
+        getWeatherData(source);
+    }
+
     private void getWeatherData(String source) {
         JSONObject jsonObject = new JSONObject(source);
         if (jsonObject.has("main")) {
@@ -82,7 +108,7 @@ public class MainApp implements Runnable {
             System.out.println("Pogoda w " + cityName + "\n"
                     + "Temperatura: " + temp + "\n"
                     + "Temperatura maksymalna: " + tempMax + "\n"
-                    + "Temperatura średnia: " + String.format("%.2f",(tempMax + tempMin) / 2).replace(",", ".") + "\n"
+                    + "Temperatura średnia: " + String.format("%.2f", (tempMax + tempMin) / 2).replace(",", ".") + "\n"
                     + "Widoczność: " + visibility + "m" + "\n"
                     + "Zachmurzenie: " + clouds + "%" + "\n"
                     + "Prędkość wiatru: " + windSpeed + "m/s" + "\n"
