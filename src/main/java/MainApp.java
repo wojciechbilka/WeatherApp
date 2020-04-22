@@ -1,5 +1,6 @@
 import java.util.Scanner;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 public class MainApp implements Runnable {
@@ -116,10 +117,15 @@ public class MainApp implements Runnable {
         if (jsonObject.has("main")) {
             JSONObject jsonTemperature = jsonObject.getJSONObject("main");
 
+            String visibility;
             Double temp = Double.valueOf(jsonTemperature.get("temp").toString());
             Double tempMin = Double.valueOf(jsonTemperature.get("temp_min").toString());
             Double tempMax = Double.valueOf(jsonTemperature.get("temp_max").toString());
-            String visibility = jsonObject.get("visibility").toString();
+            try {
+                visibility = jsonObject.get("visibility").toString();
+            } catch (JSONException e) {
+                visibility = "[Brak danych]";
+            }
             String cityName = jsonObject.get("name").toString();
             String clouds = jsonObject.getJSONObject("clouds").get("all").toString();
             String windSpeed = jsonObject.getJSONObject("wind").get("speed").toString();
