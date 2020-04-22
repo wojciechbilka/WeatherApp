@@ -13,7 +13,7 @@ public class MainApp implements Runnable {
 
     private void startApp() {
         scanner = new Scanner(System.in);
-        System.out.println("Wybierz po czym chcesz znaleźć miejsce dla którego wyświetlisz pogodę " +
+        System.out.println("Wybierz rodzaj parametru określającego miejsce, dla którego wyświetlisz pogodę " +
                 "\n0 - Zakończ działanie " +
                 "\n1 - Nazwa Miasta" +
                 "\n2 - Kod pocztowy " +
@@ -92,9 +92,9 @@ public class MainApp implements Runnable {
     }
 
     private void connectByCoordinates() {
-        System.out.println("Podaj szerokość geograficzną");
+        System.out.println("Podaj szerokość geograficzną (0-90)");
         Double latitude = scanner.nextDouble();
-        System.out.println("Podaj długość geograficzną");
+        System.out.println("Podaj długość geograficzną (0-180)");
         Double longitude = scanner.nextDouble();
         String appendLatitude = "lat=" + latitude;
         String appendLongitude = "lon=" + longitude;
