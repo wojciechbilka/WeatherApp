@@ -39,7 +39,7 @@ public class MainApp implements Runnable {
                 startApp();
                 break;
             case 4:
-                //connectByCoordinates();
+                connectByCoordinates();
                 startApp();
                 break;
             default:
@@ -90,6 +90,27 @@ public class MainApp implements Runnable {
         getWeatherData(source);
     }
 
+    private void connectByCoordinates() {
+        System.out.println("Podaj szerokość geograficzną");
+        Double latitude = scanner.nextDouble();
+        System.out.println("Podaj długość geograficzną");
+        Double longitude = scanner.nextDouble();
+        String appendLatitude = "lat=" + latitude;
+        String appendLongitude = "lon=" + longitude;
+        String source = httpService.connect(Config.APP_URL + "?" + appendLatitude + "&" + appendLongitude + "&" + keyAppend + "&" + unitsAppend + "&" + langAppend);
+
+        if (source == null) {
+            System.out.println("Błąd połączenia.");
+            return;
+        }
+        getWeatherData(source);
+    }
+
+    @Override
+    public void run() {
+        startApp();
+    }
+
     private void getWeatherData(String source) {
         JSONObject jsonObject = new JSONObject(source);
         if (jsonObject.has("main")) {
@@ -117,10 +138,5 @@ public class MainApp implements Runnable {
         } else {
             System.out.println(jsonObject.get("message"));
         }
-    }
-
-    @Override
-    public void run() {
-        startApp();
     }
 }
