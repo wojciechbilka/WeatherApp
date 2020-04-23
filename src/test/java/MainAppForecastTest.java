@@ -1,4 +1,5 @@
 import TestResources.JSONSample;
+import org.json.JSONObject;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.*;
@@ -10,8 +11,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class MainAppForecastTest {
@@ -27,7 +27,7 @@ public class MainAppForecastTest {
     @Test
     public void connectionByCityNameShouldInvokeGetWeatherMethod() {
         // given
-        given(httpService.connect(anyString())).willReturn(JSONSample.sample);
+        given(httpService.connect(anyString())).willReturn(JSONSample.forecastSample);
         doNothing().when(mainAppForecast).getWeatherData(anyString());
 
         // when
@@ -40,7 +40,7 @@ public class MainAppForecastTest {
     @Test
     public void connectionByCityNameShouldAppendProperString() {
         // given
-        given(httpService.connect(anyString())).willReturn(JSONSample.sample);
+        given(httpService.connect(anyString())).willReturn(JSONSample.forecastSample);
         doNothing().when(mainAppForecast).getWeatherData(anyString());
 
         // when
@@ -55,7 +55,7 @@ public class MainAppForecastTest {
     @Test
     public void connectionByZipCodeShouldInvokeGetWeatherMethod() {
         // given
-        given(httpService.connect(anyString())).willReturn(JSONSample.sample);
+        given(httpService.connect(anyString())).willReturn(JSONSample.forecastSample);
         doNothing().when(mainAppForecast).getWeatherData(anyString());
 
         // when
@@ -68,7 +68,7 @@ public class MainAppForecastTest {
     @Test
     public void connectionByZipCodeShouldAppendProperString() {
         // given
-        given(httpService.connect(anyString())).willReturn(JSONSample.sample);
+        given(httpService.connect(anyString())).willReturn(JSONSample.forecastSample);
         doNothing().when(mainAppForecast).getWeatherData(anyString());
 
         // when
@@ -82,7 +82,7 @@ public class MainAppForecastTest {
     @Test
     public void connectionByCityIdShouldInvokeGetWeatherMethod() {
         // given
-        given(httpService.connect(anyString())).willReturn(JSONSample.sample);
+        given(httpService.connect(anyString())).willReturn(JSONSample.forecastSample);
         doNothing().when(mainAppForecast).getWeatherData(anyString());
 
         // when
@@ -95,7 +95,7 @@ public class MainAppForecastTest {
     @Test
     public void connectionByCityIdShouldAppendProperString() {
         // given
-        given(httpService.connect(anyString())).willReturn(JSONSample.sample);
+        given(httpService.connect(anyString())).willReturn(JSONSample.forecastSample);
         doNothing().when(mainAppForecast).getWeatherData(anyString());
 
         // when
@@ -109,7 +109,7 @@ public class MainAppForecastTest {
     @Test
     public void connectionByCoordinatesShouldInvokeGetWeatherMethod() {
         // given
-        given(httpService.connect(anyString())).willReturn(JSONSample.sample);
+        given(httpService.connect(anyString())).willReturn(JSONSample.forecastSample);
         doNothing().when(mainAppForecast).getWeatherData(anyString());
 
         // when
@@ -122,7 +122,7 @@ public class MainAppForecastTest {
     @Test
     public void connectionByCoordinatesShouldAppendProperString() {
         // given
-        given(httpService.connect(anyString())).willReturn(JSONSample.sample);
+        given(httpService.connect(anyString())).willReturn(JSONSample.forecastSample);
         doNothing().when(mainAppForecast).getWeatherData(anyString());
 
         // when
@@ -132,5 +132,16 @@ public class MainAppForecastTest {
         then(httpService).should().connect(argumentCaptor.capture());
         assertThat(argumentCaptor.getValue(), containsString("lat=33"));
         assertThat(argumentCaptor.getValue(), containsString("lon=34"));
+    }
+
+    @Test
+    public void connectionWithDaysNumberShouldInvokeParsingProperNumberOfTimes() {
+        // given
+        given(httpService.connect(anyString())).willReturn(JSONSample.forecastSample);
+        doNothing().when(mainAppForecast).parseJSONWeather(any(JSONObject.class));
+        // when
+        mainAppForecast.connectByCityName("Warszawa", 2);
+        // then
+        verify(mainAppForecast, times(2*8+1)).parseJSONWeather(any(JSONObject.class));
     }
 }
