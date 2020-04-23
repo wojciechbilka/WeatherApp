@@ -3,4 +3,5 @@ public class Config {
     public static final String APP_URL = "http://api.openweathermap.org/data/2.5/weather";
     public static final String UNITS = "metric";
     public static final String LANG = "pl";
+    public static final String APP_LONG_TERM_URL = "http://api.openweathermap.org/data/2.5/forecast";
 }
