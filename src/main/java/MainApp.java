@@ -28,19 +28,31 @@ public class MainApp implements Runnable {
             case 0:
                 break;
             case 1:
-                connectByCityName();
+                System.out.println("Podaj nazwę miasta");
+                String city = scanner.next();
+                connectByCityName(city);
                 startApp();
                 break;
             case 2:
-                connectByZipCode();
+                System.out.println("Podaj kod pocztowy miasta");
+                String zipCode = scanner.next();
+                System.out.println("Podaj kod państwa (Polska -->pl)");
+                String countryCode = scanner.next();
+                connectByZipCode(zipCode, countryCode);
                 startApp();
                 break;
             case 3:
-                connectByCityId();
+                System.out.println("Podaj identyfikator miasta");
+                String id = scanner.next();
+                connectByCityId(id);
                 startApp();
                 break;
             case 4:
-                connectByCoordinates();
+                System.out.println("Podaj szerokość geograficzną (0-90)");
+                String latitude = Double.valueOf(scanner.nextDouble()).toString();
+                System.out.println("Podaj długość geograficzną (0-180)");
+                String longitude =  Double.valueOf(scanner.nextDouble()).toString();
+                connectByCoordinates(latitude, longitude);
                 startApp();
                 break;
             default:
@@ -49,13 +61,9 @@ public class MainApp implements Runnable {
         }
     }
 
-    private void connectByCityName() {
-        System.out.println("Podaj nazwę miasta");
-        String city = scanner.next();
-        String cityAppend = "q=" + city;
-
+    public void connectByCityName(String cityName) {
+        String cityAppend = "q=" + cityName;
         String source = httpService.connect(Config.APP_URL + "?" + cityAppend + "&" + keyAppend + "&" + unitsAppend + "&" + langAppend);
-
         if (source == null) {
             System.out.println("Błąd połączenia.");
             return;
@@ -63,11 +71,7 @@ public class MainApp implements Runnable {
         getWeatherData(source);
     }
 
-    private void connectByZipCode() {
-        System.out.println("Podaj kod pocztowy miasta");
-        String zipCode = scanner.next();
-        System.out.println("Podaj kod państwa (Polska -->pl)");
-        String countryCode = scanner.next();
+    public void connectByZipCode(String zipCode, String countryCode) {
         String zipAppend = "zip=" + zipCode + "," + countryCode;
         String source = httpService.connect(Config.APP_URL + "?" + zipAppend + "&" + keyAppend + "&" + unitsAppend + "&" + langAppend);
 
@@ -78,9 +82,7 @@ public class MainApp implements Runnable {
         getWeatherData(source);
     }
 
-    private void connectByCityId() {
-        System.out.println("Podaj identyfikator miasta");
-        String id = scanner.next();
+    public void connectByCityId(String id) {
         String cityIdAppend = "id=" + id;
         String source = httpService.connect(Config.APP_URL + "?" + cityIdAppend + "&" + keyAppend + "&" + unitsAppend + "&" + langAppend);
 
@@ -91,11 +93,7 @@ public class MainApp implements Runnable {
         getWeatherData(source);
     }
 
-    private void connectByCoordinates() {
-        System.out.println("Podaj szerokość geograficzną (0-90)");
-        Double latitude = scanner.nextDouble();
-        System.out.println("Podaj długość geograficzną (0-180)");
-        Double longitude = scanner.nextDouble();
+    public void connectByCoordinates(String latitude, String longitude) {
         String appendLatitude = "lat=" + latitude;
         String appendLongitude = "lon=" + longitude;
         String source = httpService.connect(Config.APP_URL + "?" + appendLatitude + "&" + appendLongitude + "&" + keyAppend + "&" + unitsAppend + "&" + langAppend);
@@ -112,23 +110,23 @@ public class MainApp implements Runnable {
         startApp();
     }
 
-    private void getWeatherData(String source) {
+    public void getWeatherData(String source) {
         JSONObject jsonObject = new JSONObject(source);
         if (jsonObject.has("main")) {
             JSONObject jsonTemperature = jsonObject.getJSONObject("main");
 
-            String visibility;
+            int visibility;
             Double temp = Double.valueOf(jsonTemperature.get("temp").toString());
             Double tempMin = Double.valueOf(jsonTemperature.get("temp_min").toString());
             Double tempMax = Double.valueOf(jsonTemperature.get("temp_max").toString());
             try {
-                visibility = jsonObject.get("visibility").toString();
+                visibility = jsonObject.getInt("visibility");
             } catch (JSONException e) {
-                visibility = "[Brak danych]";
+                visibility = -1;
             }
             String cityName = jsonObject.get("name").toString();
             String clouds = jsonObject.getJSONObject("clouds").get("all").toString();
-            String windSpeed = jsonObject.getJSONObject("wind").get("speed").toString();
+            int windSpeed = jsonObject.getJSONObject("wind").getInt("speed");
             String pressure = jsonTemperature.get("pressure").toString();
             String description = jsonObject.getJSONArray("weather").getJSONObject(0).get("description").toString();
 
